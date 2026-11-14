@@ -1,0 +1,15 @@
+# dbt project: the recipe book for turning raw data into clean, tested tables.
+name: health
+version: "1.0.0"
+profile: health          # connection settings live in profiles.yml
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  health:
+    staging:             # 🍽️ wash & cut: clean names, real types. 1 model per source table
+      +materialized: view
+      +schema: staging

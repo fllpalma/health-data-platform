@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: stg_apple_health__records
+    description: Every Apple Health record with clean names and real types (numbers, timestamps, dates).
+    columns:
+      - name: record_id
+        description: Content-based ID (md5 of the record's raw fields).
+        data_tests: [not_null]
+      - name: record_type
+        description: Short type name, e.g. StepCount, HeartRate, SleepAnalysis.
+        data_tests: [not_null]
+      - name: value_kind
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [quantity, category, other]
+      - name: value_numeric
+        description: Numeric value for quantity records (null for categories).
+        data_tests:
+          - not_null:
+              config:
+                where: "value_kind = 'quantity'"
+      - name: start_at
+        description: Start moment, time-zone aware.
+        data_tests: [not_null]
+      - name: local_date
+        description: Calendar day in the local time where the record happened (used for daily tables).
+        data_tests: [not_null]

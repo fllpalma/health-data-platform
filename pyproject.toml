@@ -6,6 +6,8 @@ description = "Personal health data platform (learning project)"
 requires-python = ">=3.12"
 dependencies = [
     "boto3>=1.44.3",
+    "dbt-core>=1.12.7",
+    "dbt-postgres>=1.11.0",
     "dlt[postgres]>=1.32.0",
 ]
 
