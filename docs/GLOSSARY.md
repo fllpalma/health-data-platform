@@ -107,3 +107,8 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **SQL dialect** | Each database's own flavour of SQL (e.g. Snowflake's `select * exclude` doesn't exist in Postgres). | Same cuisine, regional recipe differences |
 | **Window function (`row_number`)** | Numbers rows within groups without collapsing them, used to keep "copy #1" of each duplicate. | Numbering identical jars on a shelf to keep just the first |
 | **Data validation / sign-off** | A business owner confirms a metric matches reality (here: Health app) before it becomes official. | The head chef tasting before the dish goes on the menu |
+| **Business rule** | A decision about what the data *means* (e.g. "a night belongs to the morning you wake up"), agreed with the data owner. | House rules for how a dish is portioned |
+| **Data-quality rule** | A rule that excludes or flags data that can't be true (e.g. in bed > 16 h). Applied in silver; bronze is untouched. | Binning a jar with a broken seal, while keeping the delivery note |
+| **Plausibility / range test** | A test that values fall within realistic limits (our custom `in_range`). It caught 3 real data problems. | "Soup served between 60 and 85 °C" |
+| **Overlapping intervals** | Time records that cover the same minutes. Measure the time *covered*, don't add up records. | Tape strips on a ruler: measure the covered length, not the sum of strips |
+| **Lineage graph** | The map of which table is built from which (dbt docs). | The family tree of every dish back to its deliveries |

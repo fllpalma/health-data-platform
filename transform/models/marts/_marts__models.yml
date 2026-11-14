@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: daily_activity
+    description: "🥇 One row per day: steps, distance, active energy, exercise minutes, flights, stand hours (de-duplicated, ADR 0004)."
+    columns:
+      - name: activity_date
+        description: Local calendar day.
+        data_tests: [unique, not_null]
+      - name: steps
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 100000}}}]
+      - name: distance_km
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 150}}}]
+      - name: active_energy_kcal
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 10000}}}]
+      - name: exercise_minutes
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 1440}}}]
+      - name: stand_hours
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 24}}}]
+
+  - name: daily_sleep
+    description: "🥇 One row per night, dated by the morning you wake up (sleep from 18:00 D-1 to 18:00 D). Best source per night."
+    columns:
+      - name: sleep_date
+        data_tests: [unique, not_null]
+      - name: asleep_minutes
+        description: Total time asleep (all asleep stages) from the night's best source.
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 1440}}}]
+      - name: in_bed_minutes
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 1440}}}]
+      - name: has_stages
+        description: True when Core/Deep/REM stages are available for that night.
+
+  - name: daily_heart
+    description: "🥇 One row per day: resting heart rate, heart-rate variability (SDNN) and walking heart rate averages."
+    columns:
+      - name: heart_date
+        data_tests: [unique, not_null]
+      - name: resting_hr_bpm
+        data_tests: [{in_range: {arguments: {min_value: 25, max_value: 200}}}]
+      - name: hrv_sdnn_ms
+        data_tests: [{in_range: {arguments: {min_value: 0, max_value: 300}}}]
+      - name: walking_hr_bpm
+        data_tests: [{in_range: {arguments: {min_value: 40, max_value: 220}}}]
