@@ -1,4 +1,10 @@
 # dbt project: the recipe book for turning raw data into clean, tested tables.
+#
+# Layers (dbt names → medallion names):
+#   raw_apple_health (loaded by the pipeline, never changed) → 🥉 bronze
+#   staging       → 🥈 silver (step 1): real types, clear names, no business logic
+#   intermediate  → 🥈 silver (step 2): business logic, e.g. de-duplication
+#   marts         → 🥇 gold: final daily tables for people, dashboards, ML
 name: health
 version: "1.0.0"
 profile: health          # connection settings live in profiles.yml
@@ -13,3 +19,6 @@ models:
     staging:             # 🍽️ wash & cut: clean names, real types. 1 model per source table
       +materialized: view
       +schema: staging
+    intermediate:        # 🍽️ combine & fix: business logic (dedupe, merging sources)
+      +materialized: table   # stored: reused by several marts and slow to recompute
+      +schema: intermediate
