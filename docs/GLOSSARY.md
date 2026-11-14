@@ -157,3 +157,10 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Fernet key** | A secret Airflow uses to encrypt stored passwords/connections. | The key to the kitchen safe |
 | **Cosmos** | A free add-on that turns each dbt model into its own Airflow task. | Splitting "make dinner" into one ticket per dish |
 | **YAML anchor (`&` / `*`)** | Define a block once (`&name`) and reuse it (`*name`) in a YAML file. | A standard fitting spec reused for every station |
+| **Polling** | Checking regularly ("every 10 minutes: anything new?") instead of being notified. Simple and robust. | Checking the back door every 10 minutes for deliveries |
+| **Skipped run** | A run that found nothing to do and stopped early. Normal and cheap. | Opening the back door: no delivery, close it |
+| **Audit / registry table** | A table recording what was processed, when and by which run (`ops.processed_exports`). | The delivery logbook |
+| **Fingerprint (sha256)** | A unique code computed from a file's content. Same content → same code, whatever the file name. | A barcode for the whole delivery |
+| **Airflow connection** | Credentials stored by Airflow under a name (`health_warehouse`); DAG code uses the name, never the password. | A named key on the key rack |
+| **Parallel tasks** | Tasks with no dependency between them run at the same time. | Two chefs cooking side dishes simultaneously |
+| **Retry / failure callback** | Automatic re-tries after a failure; a function that runs when a task finally fails (our alert). | Try the oven again; if it still fails, tell the head chef |

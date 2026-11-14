@@ -83,10 +83,10 @@ jobs:
           docker logs lake; exit 1
 
       - name: Generate a synthetic Apple Health export
-        run: uv run python -m health_platform.synthetic data/inbox/synthetic_export.zip
+        run: uv run python -m health_platform.synthetic data/synthetic/synthetic_export.zip
 
       - name: Run the ingestion pipeline (zip -> lake -> Postgres)
-        run: uv run python -m health_platform.pipeline data/inbox/synthetic_export.zip
+        run: uv run python -m health_platform.pipeline data/synthetic/synthetic_export.zip
 
       - name: dbt build (all models + data tests)
         run: uv run dbt build
