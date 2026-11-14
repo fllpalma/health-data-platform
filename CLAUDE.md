@@ -40,7 +40,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
 8. LLMs — Ollama, LangChain/LangGraph, pgvector, Langfuse
 9. Kubernetes & GitOps (required) — kind + Helm, Argo CD
 
-## CURRENT PHASE: 2 — Transformations
+## CURRENT PHASE: 2b — Snowflake sprint (optional)
 (Update this line when a phase gate is passed.)
 
 ## Phase gate (must pass before moving on)

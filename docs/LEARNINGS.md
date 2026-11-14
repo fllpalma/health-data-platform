@@ -50,3 +50,32 @@ One section per phase, written at the phase gate: what we built, why, and the an
 3. *The Mac already runs checks before each commit. Why also run them in CI?*
    - My answer: _waived: accepted the model answer below_
    - Model answer: local checks can be skipped or misconfigured on one laptop. CI runs on a clean machine for every PR, can't be skipped, and is required before merging, so it's the independent, trusted check.
+
+## Phase 2 — Transformations (2026-11-14)
+
+- **What we built:** a dbt project (Core 1.12) turning ~3.06M raw records into tested daily tables:
+  `staging` (types, names) → `intermediate` (de-duplication, sleep segments) → `marts` (`daily_activity`, `daily_sleep`, `daily_heart`).
+  35 data tests, a custom `in_range` test, docs site with lineage graph, sqlfluff, and a CI job that runs the
+  whole platform end to end on synthetic data. 4 PRs (#8–#11), ADRs 0003–0005.
+- **Why real teams do it:** a metric like "steps per day" is defined once, reviewed, tested and documented, so every
+  dashboard and model uses the same number. Data tests catch problems in the *data* that code tests can't.
+- **🍽️ Analogy:** prep chefs with written recipe cards: wash and cut (staging), combine and fix (intermediate),
+  plate (marts). A taster checks every dish (data tests), and a full dress rehearsal with plastic food happens before
+  every change (CI on synthetic data).
+- **Medallion mapping:** 🥉 bronze = `raw_apple_health` (never changed) · 🥈 silver = staging + intermediate · 🥇 gold = marts.
+- **What surprised me / what broke:**
+  - Summing all devices inflated steps by **28%** (iPhone + Watch count the same walk). Fixed with the hourly maximum per source (ADR 0004).
+  - **852 exact duplicate** records in the export.
+  - My Watch barely tracks sleep; a third-party app does. "Prefer the Watch" would have lost most of my sleep history, so the source is chosen per night by the data.
+  - The tests caught 3 real data problems: overlapping in-bed records (+10.5%), an app writing 16–24 h "in bed" records, and two Watches reporting the same stand hours (ADR 0005).
+  - SQL dialects: `select * exclude` (Snowflake) fails in Postgres; `range_agg` (Postgres) won't exist in Snowflake.
+  - The CI rehearsal found that dlt silently dropped an all-empty column, so the raw table now has a **data contract**.
+  - dbt v2 exists but is proprietary-licensed, so we stayed on Apache-2.0 dbt Core (ADR 0003).
+
+### Phase gate
+- dbt build passes (35/35, local + CI) ✅ · docs site with lineage generated ✅
+- Health app comparison and lineage review: **waived by owner** (ADRs 0004/0005 remain "validation pending")
+- Recap questions: **waived by owner**. Model answers:
+  1. Bronze = exactly as delivered (never changed); silver = cleaned and de-duplicated; gold = final daily tables for people.
+  2. Python tests check the code with tiny invented inputs; data tests check the real data's content (duplicates, impossible values), which code can't predict.
+  3. Synthetic data has the same shape and traps but is invented, so it can run on GitHub's machines with zero privacy risk.
