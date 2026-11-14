@@ -112,3 +112,10 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Plausibility / range test** | A test that values fall within realistic limits (our custom `in_range`). It caught 3 real data problems. | "Soup served between 60 and 85 °C" |
 | **Overlapping intervals** | Time records that cover the same minutes. Measure the time *covered*, don't add up records. | Tape strips on a ruler: measure the covered length, not the sum of strips |
 | **Lineage graph** | The map of which table is built from which (dbt docs). | The family tree of every dish back to its deliveries |
+| **Integration test** | Tests that the pieces work *together* end to end (pipeline + lake + warehouse + dbt), not each piece alone. | A full dress rehearsal of service |
+| **Synthetic data** | Invented data with the same shape and traps as the real thing. Safe to use anywhere (CI, cloud, demos). | Plastic food for the rehearsal |
+| **Deterministic** | Same input → identical output every run (our generator uses a fixed random seed). | A recipe that always yields the same dish |
+| **Data contract** | A fixed, declared table shape (columns + types) that doesn't change with whatever data arrives. Found missing via the CI rehearsal. | Labelled shelf slots that stay even when empty |
+| **Schema inference** | A tool guessing table columns from the data it sees. Convenient, but the shape can silently change. | Building shelves to fit whatever came in this week |
+| **sqlfluff** | A style checker/fixer for SQL (like ruff for Python). | The inspector checking every recipe card follows the house format |
+| **Service container (CI)** | A throwaway database started next to a CI job, deleted afterwards. | A rented rehearsal kitchen, cleared after use |

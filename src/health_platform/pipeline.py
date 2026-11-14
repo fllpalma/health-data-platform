@@ -22,6 +22,7 @@ os.environ.setdefault("LOAD__DELETE_COMPLETED_JOBS", "true")  # don't keep temp 
 import dlt  # noqa: E402  (must come after the settings above)
 
 from health_platform.apple_health import (  # noqa: E402
+    FIELDS,
     iter_records,
     open_export_xml,
     read_export_date,
@@ -30,6 +31,14 @@ from health_platform.lake import upload_raw  # noqa: E402
 
 BATCH_SIZE = 10_000  # records handed to dlt per batch (fast, memory stays small)
 WORK_DIR = Path("data/.dlt")  # dlt's working files stay inside the gitignored data/ folder
+
+# Data contract: the raw table ALWAYS has these columns, even if a column has no values in an
+# export (dlt would otherwise skip all-empty columns and silently change the table's shape).
+RAW_COLUMNS = {
+    **{column: {"data_type": "text", "nullable": True} for column in FIELDS.values()},
+    "metadata": {"data_type": "json", "nullable": True},
+    "export_date": {"data_type": "text", "nullable": False},
+}
 
 
 def batched(items: Iterable[dict], size: int) -> Iterator[list[dict]]:
@@ -62,7 +71,7 @@ def run(zip_path: Path) -> None:
     @dlt.resource(
         name="records",
         write_disposition="replace",  # full snapshot each export -> replace, never duplicate
-        columns={"metadata": {"data_type": "json"}},
+        columns=RAW_COLUMNS,
     )
     def records():
         with open_export_xml(zip_path) as xml_file:

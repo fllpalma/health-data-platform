@@ -17,7 +17,9 @@ with segments as (
         (start_at_local + interval '6 hours')::date as sleep_date,
         value_category as stage,
         case
-            when value_category in ('AsleepCore', 'AsleepDeep', 'AsleepREM', 'AsleepUnspecified', 'Asleep') then 'asleep'
+            when
+                value_category in ('AsleepCore', 'AsleepDeep', 'AsleepREM', 'AsleepUnspecified', 'Asleep')
+                then 'asleep'
             when value_category = 'Awake' then 'awake'
             when value_category = 'InBed' then 'in_bed'
             else 'other'
