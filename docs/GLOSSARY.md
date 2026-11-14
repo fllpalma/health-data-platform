@@ -119,3 +119,23 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Schema inference** | A tool guessing table columns from the data it sees. Convenient, but the shape can silently change. | Building shelves to fit whatever came in this week |
 | **sqlfluff** | A style checker/fixer for SQL (like ruff for Python). | The inspector checking every recipe card follows the house format |
 | **Service container (CI)** | A throwaway database started next to a CI job, deleted afterwards. | A rented rehearsal kitchen, cleared after use |
+
+## Phase 2b — Snowflake sprint
+
+| Term | Plain meaning | 🍽️ |
+|---|---|---|
+| **Snowflake** | A cloud data warehouse: you pay per second a "warehouse" (compute) runs, plus storage. | A rented professional kitchen with a meter on the stove |
+| **Virtual warehouse** | Snowflake's compute engine, sized X-Small → 6X-Large. Separate from storage. Ours: X-Small, auto-suspend 60 s. | The stove: bigger = faster = pricier per minute |
+| **Credit** | Snowflake's billing unit. X-Small uses 1 credit per running hour (billed per second, 60 s minimum). | Coins in the stove's meter |
+| **Auto-suspend / auto-resume** | The warehouse switches off after idle time and on again when a query arrives. Most of cost control. | A stove that turns itself off when nobody's cooking |
+| **Resource monitor** | A hard credit cap that notifies and then suspends warehouses. Our budget alarm. | A prepaid meter that cuts the gas at the limit |
+| **Service user / key-pair auth** | A robot account that logs in with a private key (on the Mac) matching a public key (in Snowflake). No password. | A staff badge that only opens the back door |
+| **Target (dbt)** | One named connection in `profiles.yml` (`local` = Postgres, `snowflake`). Same project, `--target` picks the warehouse. | Same recipes, choose which kitchen cooks them |
+| **Cross-database macro** | A dbt helper (e.g. `dbt.datediff`) that writes the right SQL for each warehouse. | A recipe step written so any kitchen's equipment can do it |
+| **Portable SQL** | SQL that runs unchanged on several databases. | A recipe that works in any kitchen |
+| **Regression test** | Compare results before vs after a change: same input, same output? | Taste the dish after changing the method: still the same? |
+| **Parity test** | Same input on two systems: identical output? Caught a silent precision bug. | Cook the same recipe in two kitchens, compare the plates |
+| **Precision / scale** | Total digits / digits after the decimal point. `numeric(38,10)` = up to 10 decimals. | How finely the scale weighs |
+| **Gaps and islands** | A standard SQL technique to merge overlapping time ranges using window functions. | Joining overlapping tape strips into continuous pieces |
+| **Guardrail** | Code that makes the unsafe action impossible (refuses real data for Snowflake). | A lock on the door that customer files can't pass |
+| **Infrastructure as code (Snowflake)** | `snowflake/setup.sql` + `teardown.sql`: reviewable, repeatable, reversible setup. | The written rental agreement, plus the move-out checklist |

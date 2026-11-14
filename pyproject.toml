@@ -8,7 +8,8 @@ dependencies = [
     "boto3>=1.44.3",
     "dbt-core>=1.12.7",
     "dbt-postgres>=1.11.0",
-    "dlt[postgres]>=1.32.0",
+    "dbt-snowflake>=1.12.5",
+    "dlt[postgres,snowflake]>=1.32.0",
 ]
 
 # Tools only developers need (not part of the pipeline itself)

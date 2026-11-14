@@ -241,7 +241,7 @@ def write_export_zip(path: str | Path, seed: int = 42) -> Path:
         [
             '<?xml version="1.0" encoding="UTF-8"?>',
             "<!-- SYNTHETIC Apple Health export. All values are invented. -->",
-            '<HealthData locale="en_GB">',
+            '<HealthData locale="en_GB" synthetic="true">',  # checked by the privacy guardrail
             f' <ExportDate value="{_ts(export_date)}"/>',
             *build_records(seed),
             "</HealthData>",

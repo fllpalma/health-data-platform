@@ -7,6 +7,7 @@ import pytest
 
 from health_platform.apple_health import (
     find_export_xml,
+    is_synthetic_export,
     iter_records,
     open_export_xml,
     read_export_date,
@@ -72,3 +73,21 @@ def test_raw_table_contract_covers_every_parsed_field():
     from health_platform.pipeline import RAW_COLUMNS
 
     assert set(FIELDS.values()) | {"metadata", "export_date"} == set(RAW_COLUMNS)
+
+
+def test_guardrail_blocks_real_exports_from_leaving_the_mac(sample_zip):
+    from health_platform.pipeline import check_allowed
+
+    with open_export_xml(sample_zip) as xml_file:
+        assert is_synthetic_export(xml_file) is False  # fixture has no synthetic marker
+    with pytest.raises(PermissionError):
+        check_allowed("snowflake", synthetic=False)
+    check_allowed("postgres", synthetic=False)  # local warehouse: allowed
+    check_allowed("snowflake", synthetic=True)  # synthetic data: allowed
+
+
+def test_synthetic_exports_are_marked(tmp_path):
+    from health_platform.synthetic import write_export_zip
+
+    with open_export_xml(write_export_zip(tmp_path / "s.zip")) as xml_file:
+        assert is_synthetic_export(xml_file) is True

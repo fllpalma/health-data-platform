@@ -27,11 +27,12 @@ daily as (
 
     select
         local_date,
-        sum(value) filter (where record_type = 'StepCount') as steps,
-        sum(value) filter (where record_type = 'DistanceWalkingRunning') as distance_km,
-        sum(value) filter (where record_type = 'ActiveEnergyBurned') as active_energy_kcal,
-        sum(value) filter (where record_type = 'AppleExerciseTime') as exercise_minutes,
-        sum(value) filter (where record_type = 'FlightsClimbed') as flights_climbed
+        -- Portable SQL: "sum(case when ...)" instead of Postgres-only "sum(...) filter (where ...)"
+        sum(case when record_type = 'StepCount' then value end) as steps,
+        sum(case when record_type = 'DistanceWalkingRunning' then value end) as distance_km,
+        sum(case when record_type = 'ActiveEnergyBurned' then value end) as active_energy_kcal,
+        sum(case when record_type = 'AppleExerciseTime' then value end) as exercise_minutes,
+        sum(case when record_type = 'FlightsClimbed' then value end) as flights_climbed
     from hourly
     group by 1
 

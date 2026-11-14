@@ -21,8 +21,9 @@ cleaned as (
             else 'other'
         end as value_kind,
 
-        -- Value: numbers for quantities; readable labels for categories
-        case when type like 'HKQuantityTypeIdentifier%' then value::numeric end as value_numeric,
+        -- Value: numbers for quantities; readable labels for categories.
+        -- Explicit precision: in Snowflake a bare "numeric" means NUMBER(38,0) = no decimals (found by parity test)
+        case when type like 'HKQuantityTypeIdentifier%' then value::numeric(38, 10) end as value_numeric,
         case
             when type like 'HKCategoryTypeIdentifier%'
                 then replace(value, 'HKCategoryValue' || regexp_replace(type, '^HKCategoryTypeIdentifier', ''), '')

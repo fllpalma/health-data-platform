@@ -23,6 +23,7 @@ import dlt  # noqa: E402  (must come after the settings above)
 
 from health_platform.apple_health import (  # noqa: E402
     FIELDS,
+    is_synthetic_export,
     iter_records,
     open_export_xml,
     read_export_date,
@@ -56,12 +57,38 @@ def postgres_url() -> str:
     )
 
 
-def run(zip_path: Path) -> None:
+def snowflake_credentials() -> dict:
+    env = os.environ
+    return {
+        "host": env["SNOWFLAKE_ACCOUNT"],
+        "username": env["SNOWFLAKE_USER"],
+        "role": env.get("SNOWFLAKE_ROLE", "HEALTH_TRANSFORMER"),
+        "warehouse": env.get("SNOWFLAKE_WAREHOUSE", "HEALTH_WH"),
+        "database": env.get("SNOWFLAKE_DATABASE", "HEALTH"),
+        "private_key_path": env["SNOWFLAKE_PRIVATE_KEY_PATH"],
+        "private_key_passphrase": env["SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"],
+    }
+
+
+def check_allowed(destination: str, synthetic: bool) -> None:
+    """Privacy guardrail (CLAUDE.md rule 4): only SYNTHETIC exports may leave the Mac."""
+    if destination != "postgres" and not synthetic:
+        raise PermissionError(
+            f"Refusing to send a real health export to '{destination}'. "
+            "Only synthetic exports (python -m health_platform.synthetic) may leave this Mac."
+        )
+
+
+def run(zip_path: Path, destination: str = "postgres") -> None:
+    with open_export_xml(zip_path) as xml_file:
+        synthetic = is_synthetic_export(xml_file)
+    check_allowed(destination, synthetic)
+
     with open_export_xml(zip_path) as xml_file:
         export_date = read_export_date(xml_file)
     if not export_date:
         raise ValueError("No <ExportDate> found: is this an Apple Health export?")
-    print(f"Export date: {export_date}")
+    print(f"Export date: {export_date} | synthetic: {synthetic} | destination: {destination}")
 
     # ① Lake: store the original zip untouched, organised by export date
     key = f"apple_health/export_date={export_date[:10]}/{zip_path.name}"
@@ -80,20 +107,32 @@ def run(zip_path: Path) -> None:
                     record["export_date"] = export_date
                 yield batch
 
+    if destination == "snowflake":
+        target = dlt.destinations.snowflake(credentials=snowflake_credentials())
+    else:
+        target = dlt.destinations.postgres(credentials=postgres_url())
+
     pipeline = dlt.pipeline(
-        pipeline_name="apple_health",
-        destination=dlt.destinations.postgres(credentials=postgres_url()),
+        pipeline_name=f"apple_health_{destination}",  # separate state per warehouse
+        destination=target,
         dataset_name="raw_apple_health",
         pipelines_dir=str(WORK_DIR),
     )
-    print("② Loading records into Postgres (this can take a few minutes)...")
+    print(f"② Loading records into {destination} (this can take a few minutes)...")
     print(pipeline.run(records()))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Load an Apple Health export into the platform.")
     parser.add_argument("zip_path", type=Path, help="path to the export .zip")
-    run(parser.parse_args().zip_path)
+    parser.add_argument(
+        "--destination",
+        choices=["postgres", "snowflake"],
+        default="postgres",
+        help="warehouse to load into (snowflake accepts synthetic exports only)",
+    )
+    args = parser.parse_args()
+    run(args.zip_path, args.destination)
 
 
 if __name__ == "__main__":
