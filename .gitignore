@@ -1,0 +1,37 @@
+# =============================================================
+# .gitignore: files Git must NEVER track
+# Rule of thumb: if it's data, a secret, or generated, it goes here.
+# =============================================================
+
+# --- 🔒 Health data (PRIVACY: never commit) -------------------
+# The project's data folder: everything inside is private
+data/
+# The file the iPhone produces when you export Health data (+ renamed copies like "export (1).zip")
+export*.zip
+# The unzipped export, wherever it lands in the repo
+apple_health_export/
+# Workout GPS routes (reveal where you live and run)
+*.gpx
+
+
+# --- Secrets ----------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Python ----------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# --- Editors / OS ----------------------------------------------
+.DS_Store
+.vscode/
+.idea/
+
+# --- Claude Code: personal local settings ---------------------
+.claude/settings.local.json
