@@ -1,0 +1,23 @@
+# pre-commit: the "hygiene inspector". These checks run automatically on every `git commit`.
+# If one fails, the commit is stopped so you can fix it first.
+# Update versions with: pre-commit autoupdate
+repos:
+  # General-purpose safety checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files   # blocks big files (e.g. a health export) from being committed
+        args: ["--maxkb=500"]
+      - id: detect-private-key        # blocks accidentally committed private keys
+      - id: check-merge-conflict      # blocks leftover merge-conflict markers
+      - id: check-yaml                # YAML files must be valid
+      - id: end-of-file-fixer         # every file ends with a newline (tidy diffs)
+      - id: trailing-whitespace       # removes invisible spaces at line ends
+
+  # Python: lint + format (does nothing until Python code exists in Phase 1)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.5
+    hooks:
+      - id: ruff-check    # lint: spot bugs & style problems
+        args: ["--fix"]
+      - id: ruff-format   # format: consistent code layout
