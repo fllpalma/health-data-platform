@@ -8,7 +8,9 @@ This is the RAW layer: values are kept exactly as delivered (all text).
 Cleaning, typing and de-duplicating happen later, in dbt (Phase 2).
 """
 
+import zipfile
 from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import BinaryIO
 from xml.etree.ElementTree import iterparse
@@ -58,3 +60,41 @@ def _to_dict(elem) -> dict:
         entry.get("key"): entry.get("value") for entry in elem.iter("MetadataEntry")
     }
     return record
+
+
+# --- Reading straight from the zip (the original delivery) -------------------
+
+
+def find_export_xml(names: list[str]) -> str:
+    """Pick the main records file among the zip's file names.
+
+    Real-world trap: the file is named after the phone's language
+    ("export.xml", "exportação.xml", ...) and the name can arrive garbled
+    because zips don't always record their text encoding. So we never search
+    for a fixed name: we take the one .xml that is NOT the clinical export_cda.xml.
+    """
+    candidates = [
+        name
+        for name in names
+        if name.lower().endswith(".xml")
+        and not name.rsplit("/", 1)[-1].lower().startswith("export_cda")
+    ]
+    if len(candidates) != 1:
+        raise ValueError(f"Expected exactly one main export .xml, found: {candidates}")
+    return candidates[0]
+
+
+@contextmanager
+def open_export_xml(zip_path: str | Path) -> Iterator[BinaryIO]:
+    """Open the main export XML inside the zip as a stream (nothing unzipped to disk)."""
+    with zipfile.ZipFile(zip_path) as archive:
+        with archive.open(find_export_xml(archive.namelist())) as xml_file:
+            yield xml_file
+
+
+def read_export_date(source: str | Path | BinaryIO) -> str | None:
+    """Return the export's <ExportDate value>. It sits at the top, so this stops early."""
+    for _event, elem in iterparse(source, events=("end",)):
+        if elem.tag == "ExportDate":
+            return elem.get("value")
+    return None
