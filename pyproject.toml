@@ -4,11 +4,17 @@ name = "health-platform"
 version = "0.1.0"
 description = "Personal health data platform (learning project)"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "boto3>=1.44.3",
+    "dlt[postgres]>=1.32.0",
+]
 
 # Tools only developers need (not part of the pipeline itself)
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.17.5",
+]
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13"]

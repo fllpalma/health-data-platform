@@ -64,3 +64,20 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Healthcheck** | A small automatic test Docker runs to know whether a service is really working. | Checking the fridge is actually cold |
 | **Smoke test** | A quick "does it basically work?" check after starting something. | Tasting the sauce before service |
 | **Database client** | A program that connects to a database so you can browse and query it (VS Code PostgreSQL extension). | The window into the cold room |
+| **XML** | A text format where data sits inside labelled tags, like `<Record value="412"/>`. Apple's export uses it. | Every jar wrapped and labelled |
+| **Parser** | Code that reads a file format and turns it into structured records. | The person unpacking boxes and reading labels |
+| **Streaming (parsing)** | Reading a file piece by piece instead of loading it all into memory (19 MB vs 1,274 MB in our test). | Unloading one box at a time onto a conveyor belt |
+| **Generator** | Python code that hands out items one at a time, only when asked. This is what makes streaming possible. | A conveyor belt that moves only when you take a jar |
+| **Raw layer** | Data stored exactly as delivered: no cleaning, values kept as text. Cleaning happens later (dbt). | Unopened deliveries |
+| **Test / pytest** | Code that checks other code automatically; `pytest` runs all of them. | Tasting every dish against the recipe card |
+| **Test fixture** | Fake sample data used by tests (our synthetic `export_sample.xml`). | A plastic display dish used for training |
+| **TDD** | Test-driven development: write the test first (it fails = red), then the code (it passes = green). | Agreeing how the dish must taste before cooking |
+| **Virtual environment (`.venv`)** | A project's private set of Python libraries, isolated from the rest of the Mac. | Each kitchen station's own spice rack |
+| **Lockfile (`uv.lock`)** | Exact versions of every library, so every machine installs identical ones. | The exact brand list for every ingredient |
+| **dlt** | A free Python library that loads data into databases: creates tables, handles batches. | The porter moving jars onto shelves |
+| **boto3** | Amazon's official Python library for S3 (works with our S3-compatible lake). | The pantry's standard order form |
+| **Idempotent** | Running something twice gives the same result as once: no duplicates. | Restocking a shelf to "10 jars", not "add 10 jars" |
+| **Full snapshot / replace** | Each export contains your whole history, so each load replaces the table entirely. | Swapping the whole shelf for this week's complete delivery |
+| **Object key / partition** | A file's full "path" in the lake. `export_date=2026-11-14/` organises files by date. | Shelf label with the delivery date |
+| **Text encoding** | How letters become bytes. A mismatch garbles names like `exportação` → `exportac╠ºa╠âo`. | A label written in an alphabet the reader doesn't know |
+| **Telemetry** | Usage statistics a tool sends home to its makers. We switched dlt's off. | A supplier asking for reports on how you use their goods |
