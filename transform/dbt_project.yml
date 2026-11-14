@@ -22,3 +22,6 @@ models:
     intermediate:        # 🍽️ combine & fix: business logic (dedupe, merging sources)
       +materialized: table   # stored: reused by several marts and slow to recompute
       +schema: intermediate
+    marts:               # 🍽️ the plated dish: final daily tables (🥇 gold)
+      +materialized: table
+      +schema: marts
