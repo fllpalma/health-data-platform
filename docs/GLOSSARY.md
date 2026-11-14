@@ -103,3 +103,7 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Time zone (UTC vs local)** | UTC is one global clock; *local* is the wall-clock where you were. Daily tables use local days. | Head office clock vs. the kitchen clock |
 | **Data profiling** | Looking at what's actually in the data (kinds, units, nulls) before modelling it. | Checking the delivery before writing the menu |
 | **Duplicate (exact vs overlapping)** | Exact = the same record twice; overlapping = different devices recording the same event. | The same jar delivered twice vs. two suppliers sending the same item |
+| **Medallion architecture** | Layer naming used in lakehouse/Databricks teams. Ours: 🥉 bronze = `raw_apple_health` (untouched), 🥈 silver = `staging` + `intermediate`, 🥇 gold = `marts`. | Sealed boxes → prepped ingredients → plated dish |
+| **SQL dialect** | Each database's own flavour of SQL (e.g. Snowflake's `select * exclude` doesn't exist in Postgres). | Same cuisine, regional recipe differences |
+| **Window function (`row_number`)** | Numbers rows within groups without collapsing them, used to keep "copy #1" of each duplicate. | Numbering identical jars on a shelf to keep just the first |
+| **Data validation / sign-off** | A business owner confirms a metric matches reality (here: Health app) before it becomes official. | The head chef tasting before the dish goes on the menu |

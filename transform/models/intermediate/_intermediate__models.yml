@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_apple_health__records_deduplicated
+    description: All records with exact duplicates removed (same content written twice). 🥈 silver.
+    columns:
+      - name: record_id
+        data_tests: [unique, not_null]
+
+  - name: int_apple_health__activity_hourly
+    description: >
+      Cumulative activity metrics (steps, distance, active energy, exercise minutes, flights) per local hour,
+      with overlapping sources resolved by taking the highest single-source total (ADR 0004). 🥈 silver.
+    columns:
+      - name: activity_hour_id
+        description: record_type + hour. One row per metric per hour.
+        data_tests: [unique, not_null]
+      - name: value
+        data_tests: [not_null]
+      - name: sources_in_hour
+        description: How many sources reported this metric in this hour (>1 = overlap resolved).
