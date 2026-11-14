@@ -42,3 +42,25 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Ruleset** | GitHub's server-side rules for a branch (e.g. "PR required, no deleting `main`"). Free on public repos. | The lock on the official recipe book |
 | **No-reply email** | A private GitHub address used in commits so your real email isn't public. | Signing the logbook with your staff number, not your home address |
 | **Public vs. private repo** | Public = anyone can read the code; private = only invited people. Data safety comes from the locks, not visibility. | A glass-walled kitchen: people see the cooking, never the customer files |
+
+## Phase 1 — Foundations
+
+| Term | Plain meaning | 🍽️ |
+|---|---|---|
+| **Ingestion** | Bringing data from its source (your iPhone export) into the platform. | Deliveries arriving at the back door |
+| **Data lake** | Storage for raw files kept exactly as they arrived, so you can always rebuild from the originals. | The pantry: labelled, unopened boxes |
+| **Data warehouse** | A database organised into tables, built for asking questions (Postgres here). | Organised shelves the chefs can reach |
+| **Table** | Data in rows and columns, like a spreadsheet (e.g. one row per step-count reading). | One shelf of identical jars |
+| **Postgres (PostgreSQL)** | A free, open-source, very widely used database. | The shelving system |
+| **S3** | Amazon's file-storage service. Its *API* became the industry standard for data lakes. | The big supplier's warehouse standard |
+| **API** | The agreed set of commands programs use to talk to a service. | The order form a supplier accepts |
+| **S3-compatible** | Any storage that understands S3's API, so code written for S3 works unchanged. | A pantry built to the supplier's standard |
+| **SeaweedFS** | The free, S3-compatible storage we run locally as our lake (replaced MinIO, see ADR 0002). | Our pantry |
+| **Bucket** | A top-level folder in S3 (ours: `raw`). | One pantry room |
+| **Access key / secret key** | S3's username / password. The secret is never sent itself; a *signature* calculated from it is. | Staff ID + PIN |
+| **Port** | A numbered "door" on a computer that a service listens on (Postgres: 5432). `127.0.0.1` = only this Mac can use it. | The kitchen's door number; internal-only doors |
+| **Volume** | Storage that lives outside a container, so data survives restarts and rebuilds. | Fridge contents survive swapping the fridge |
+| **Pinned version** | An exact version number (`postgres:18.7`), so every install is identical. | "Barilla No. 5", not just "pasta" |
+| **Healthcheck** | A small automatic test Docker runs to know whether a service is really working. | Checking the fridge is actually cold |
+| **Smoke test** | A quick "does it basically work?" check after starting something. | Tasting the sauce before service |
+| **Database client** | A program that connects to a database so you can browse and query it (VS Code PostgreSQL extension). | The window into the cold room |

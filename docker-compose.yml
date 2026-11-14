@@ -1,0 +1,68 @@
+# docker-compose.yml: the kitchen floor plan.
+# Each "service" is one container. "profiles" group services by phase,
+# so only what the current phase needs is running.
+#
+#   Start Phase 1 services:  docker compose --profile foundations up -d
+#   Check they're healthy:   docker compose --profile foundations ps
+#   Stop them (data kept):   docker compose --profile foundations down
+#
+# Passwords come from .env (gitignored). See .env.example.
+name: health-data-platform
+
+services:
+  # 🍽️ The pantry: raw files stored exactly as delivered (S3-compatible data lake)
+  lake:
+    image: chrislusf/seaweedfs:4.53          # pinned version: same result on every machine
+    profiles: ["foundations"]
+    entrypoint: ["weed"]
+    command:
+      - mini                                 # all-in-one dev mode (storage + S3 + admin UI)
+      - -dir=/data
+      - -bucket=raw                          # create the "raw" bucket on startup
+      - -admin.password=${LAKE_ADMIN_PASSWORD:?set LAKE_ADMIN_PASSWORD in .env}
+    environment:
+      # Standard S3 credential names, the same ones real AWS S3 uses
+      AWS_ACCESS_KEY_ID: ${LAKE_ACCESS_KEY:?set LAKE_ACCESS_KEY in .env}
+      AWS_SECRET_ACCESS_KEY: ${LAKE_SECRET_KEY:?set LAKE_SECRET_KEY in .env}
+    ports:
+      - "127.0.0.1:8333:8333"                # S3 API (127.0.0.1 = reachable from this Mac only)
+      - "127.0.0.1:12535:12535"              # Admin UI in the browser
+    volumes:
+      - lake-data:/data                      # files survive container restarts
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8333/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 1g                         # stay well inside Docker's 12 GB budget
+    restart: unless-stopped
+
+  # 🍽️ The organised shelves: tables you can query (data warehouse)
+  warehouse:
+    image: postgres:18.7
+    profiles: ["foundations"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-health}
+    ports:
+      - "127.0.0.1:5432:5432"                # Mac-only, never exposed to the network
+    volumes:
+      - warehouse-data:/var/lib/postgresql   # Postgres 18+ layout
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    restart: unless-stopped
+
+volumes:
+  lake-data:
+  warehouse-data:
