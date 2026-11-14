@@ -139,3 +139,21 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Gaps and islands** | A standard SQL technique to merge overlapping time ranges using window functions. | Joining overlapping tape strips into continuous pieces |
 | **Guardrail** | Code that makes the unsafe action impossible (refuses real data for Snowflake). | A lock on the door that customer files can't pass |
 | **Infrastructure as code (Snowflake)** | `snowflake/setup.sql` + `teardown.sql`: reviewable, repeatable, reversible setup. | The written rental agreement, plus the move-out checklist |
+
+## Phase 3 — Orchestration
+
+| Term | Plain meaning | 🍽️ |
+|---|---|---|
+| **Orchestrator (Airflow)** | Software that runs pipeline steps in the right order, on time or on events, with retries and a history of every run. | The head chef's schedule |
+| **DAG** | "Directed acyclic graph": a flowchart of tasks with arrows for "this before that", never looping back. | The order of prep for a dish |
+| **Task** | One step in a DAG (e.g. "load the export", "build daily_sleep"). | One line on the prep list |
+| **Executor (Local/Celery/Kubernetes)** | *Where* tasks run: inside the scheduler (Local), on worker machines (Celery), or as pods (Kubernetes). | Who actually cooks: the head chef, a brigade, or a chain of kitchens |
+| **Scheduler** | The Airflow component that decides what runs when. | The head chef watching the clock |
+| **API server / UI** | Airflow's web screen and API, showing every run, task and log. | The board on the office wall |
+| **DAG processor** | Reads DAG files and keeps their definitions current. | The person who files new schedules |
+| **Triggerer** | Waits efficiently for external events without blocking a worker. | A doorbell instead of someone staring at the door |
+| **Metadata database** | Airflow's own database of runs and states (separate from our warehouse). | The kitchen's logbook of who cooked what, when |
+| **Docker image / Dockerfile** | An image is a ready-to-run package; a Dockerfile is the recipe to build it. We extend the official Airflow image. | A pre-fitted kitchen unit, built from a fitting plan |
+| **Fernet key** | A secret Airflow uses to encrypt stored passwords/connections. | The key to the kitchen safe |
+| **Cosmos** | A free add-on that turns each dbt model into its own Airflow task. | Splitting "make dinner" into one ticket per dish |
+| **YAML anchor (`&` / `*`)** | Define a block once (`&name`) and reuse it (`*name`) in a YAML file. | A standard fitting spec reused for every station |

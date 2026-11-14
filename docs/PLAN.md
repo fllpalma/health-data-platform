@@ -42,7 +42,7 @@ Each phase builds on the one before. Don't start a phase until the previous gate
 
 ## Phase 3 — Orchestration (Airflow)
 **Goal:** everything runs on its own, in the right order, with retries.
-- Airflow 3 (Astro CLI) running ingestion → dbt as a DAG; triggered when a new export lands.
+- Airflow 3 (official image, LocalExecutor, Compose profile `orchestration`; see ADR 0007) running ingestion → dbt as a DAG; triggered when a new export lands.
 - Learn: scheduling, dependencies, retries, backfills, alerts on failure.
 - CI comparison: run the same lint + test pipeline in **Jenkins** (self-hosted, Docker, `Jenkinsfile`) alongside GitHub Actions. GitHub Actions stays the official PR check.
 - Learn: hosted vs. self-hosted CI, why many enterprises still run Jenkins, and why Jenkins is *not* a data orchestrator (vs. Airflow).
