@@ -15,11 +15,11 @@ One section per phase, written at the phase gate: what we built, why, and the an
 
 ### Recap questions
 1. *Two locks keep health data out of GitHub: what and why two?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: `.gitignore` (Git never even sees data files by name) + pre-commit large-file check (blocks big files with names `.gitignore` didn't predict). Two layers, because any single safety net eventually has a gap.
 2. *Why a branch + pull request instead of changing `main` directly?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: `main` must always be the trustworthy version. Work happens on a side counter (branch) and only enters the official recipe book after review and checks (PR), leaving a record of what changed and why.
 3. *What is a container, and why will Phase 1 need them?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: a sealed box that runs a piece of software the same way on any machine. Phase 1 needs a database (Postgres) and a data lake (MinIO); containers let us run them on the Mac without messy installs, and remove them cleanly.
