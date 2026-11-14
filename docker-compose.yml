@@ -83,7 +83,7 @@ services:
       resources:
         limits:
           memory: 1g                         # stay well inside Docker's 12 GB budget
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   # 🍽️ The organised shelves: tables you can query (data warehouse)
   warehouse:
@@ -106,7 +106,7 @@ services:
       resources:
         limits:
           memory: 1g
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   # ===================== Phase 3: orchestration (Airflow) =====================
   # 🍽️ The head chef's schedule.
@@ -129,7 +129,7 @@ services:
       resources:
         limits:
           memory: 512m
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   airflow-init:                              # one-off: create/upgrade Airflow's tables + the admin user
     <<: *airflow-common
@@ -163,7 +163,7 @@ services:
       resources:
         limits:
           memory: 1536m
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   airflow-scheduler:                         # decides what runs when; with LocalExecutor it also runs tasks
     <<: *airflow-common
@@ -179,7 +179,7 @@ services:
       resources:
         limits:
           memory: 2g
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   airflow-dag-processor:                     # reads DAG files and keeps their definitions up to date
     <<: *airflow-common
@@ -195,7 +195,7 @@ services:
       resources:
         limits:
           memory: 1g
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
   airflow-triggerer:                         # waits efficiently for external events (e.g. a file landing)
     <<: *airflow-common
@@ -211,7 +211,7 @@ services:
       resources:
         limits:
           memory: 768m
-    restart: unless-stopped
+    restart: "no"                          # on demand only: never auto-start with Docker
 
 volumes:
   lake-data:
