@@ -7,7 +7,7 @@ from raw data → pipelines → ML → automations → LLM agents, built the way
 > See `.gitignore`. Anything deployed to the cloud uses synthetic data only.
 
 ## Status
-Current phase: **0 — Setup**. Full roadmap: [docs/PLAN.md](docs/PLAN.md)
+Current phase: **1 — Foundations**. Full roadmap: [docs/PLAN.md](docs/PLAN.md)
 
 ## Prerequisites (macOS, Apple Silicon)
 | Tool | Purpose |
@@ -24,6 +24,7 @@ git clone https://github.com/fllpalma/health-data-platform.git
 cd health-data-platform
 pre-commit install          # switch on the automatic checks for this copy
 cp .env.example .env        # then fill in real values (never commit .env)
+docker compose --profile foundations up -d --wait   # Phase 1: start the lake + warehouse
 ```
 
 ## How we work

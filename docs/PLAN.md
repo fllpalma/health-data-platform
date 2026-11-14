@@ -16,8 +16,8 @@ Each phase builds on the one before. Don't start a phase until the previous gate
 
 ## Phase 1 — Foundations (ingestion, lake, warehouse)
 **Goal:** get the Apple Health export from a zip on disk into queryable tables.
-- Docker Compose: MinIO (S3-like data lake) + Postgres (warehouse).
-- Python + `dlt`: unzip, parse `export.xml` (streamed — it's huge), land raw files in MinIO, load raw tables into Postgres.
+- Docker Compose: SeaweedFS (S3-compatible data lake, see ADR 0002) + Postgres (warehouse).
+- Python + `dlt`: unzip, parse `export.xml` (streamed — it's huge), land raw files in the lake (S3 API), load raw tables into Postgres.
 - Learn: batch ingestion, raw vs. clean data, idempotency (re-running doesn't duplicate), schemas.
 - Tests with `pytest` on the parser. CI: lint + tests on every PR (GitHub Actions).
 - 🍽️ Deliveries arrive at the back door and go into the pantry, labelled and untouched.
