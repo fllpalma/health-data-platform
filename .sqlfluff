@@ -10,6 +10,8 @@ exclude_rules = ST06, RF04
 [sqlfluff:templater:jinja]
 # understand dbt's ref() / source()
 apply_dbt_builtins = True
+# stand-ins for dbt.datediff / dbt.dateadd / dbt.type_numeric (lint only)
+library_path = transform/sqlfluff_libs
 
 [sqlfluff:indentation]
 tab_space_size = 4

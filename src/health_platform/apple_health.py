@@ -98,3 +98,10 @@ def read_export_date(source: str | Path | BinaryIO) -> str | None:
         if elem.tag == "ExportDate":
             return elem.get("value")
     return None
+
+
+def is_synthetic_export(source: str | Path | BinaryIO) -> bool:
+    """True only if stamped synthetic="true" (our generator). Real exports never are."""
+    for _event, elem in iterparse(source, events=("start",)):
+        return elem.tag == "HealthData" and elem.get("synthetic") == "true"
+    return False

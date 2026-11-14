@@ -14,7 +14,8 @@ with segments as (
     select
         record_id,
         source_name,
-        (start_at_local + interval '6 hours')::date as sleep_date,
+        -- dbt cross-database macros write the right SQL for each warehouse (Postgres / Snowflake)
+        cast({{ dbt.dateadd("hour", 6, "start_at_local") }} as date) as sleep_date,
         value_category as stage,
         case
             when
@@ -26,7 +27,7 @@ with segments as (
         end as stage_group,
         start_at_local,
         end_at_local,
-        extract(epoch from (end_at - start_at)) / 60.0 as minutes
+        cast({{ dbt.datediff("start_at", "end_at", "second") }} as {{ dbt.type_numeric() }}) / 60.0 as minutes
     from {{ ref('int_apple_health__records_deduplicated') }}
     where record_type = 'SleepAnalysis'
 

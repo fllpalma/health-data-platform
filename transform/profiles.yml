@@ -11,3 +11,17 @@ health:
       dbname: "{{ env_var('POSTGRES_DB', 'health') }}"
       schema: analytics   # fallback schema; layers set their own (staging, ...)
       threads: 4
+
+    # Phase 2b: same project, different warehouse. Run with: dbt build --target snowflake
+    # Robot user with key-pair login (no password). Values come from .env.
+    snowflake:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'not-set') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'not-set') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'HEALTH_TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'HEALTH_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'HEALTH') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH', 'not-set') }}"
+      private_key_passphrase: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE', 'not-set') }}"
+      schema: analytics
+      threads: 4
