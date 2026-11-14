@@ -81,3 +81,25 @@ Plain-language definitions, added the first time each term appears. 🍽️ = re
 | **Object key / partition** | A file's full "path" in the lake. `export_date=2026-11-14/` organises files by date. | Shelf label with the delivery date |
 | **Text encoding** | How letters become bytes. A mismatch garbles names like `exportação` → `exportac╠ºa╠âo`. | A label written in an alphabet the reader doesn't know |
 | **Telemetry** | Usage statistics a tool sends home to its makers. We switched dlt's off. | A supplier asking for reports on how you use their goods |
+
+## Phase 2 — Transformations
+
+| Term | Plain meaning | 🍽️ |
+|---|---|---|
+| **dbt** | A tool where each table is a SQL "recipe" (model). It runs them in order, tests the results and documents them. | The prep chefs and their recipe cards |
+| **Model (dbt)** | One SQL `select` that defines one table or view. | One recipe card |
+| **Source (dbt)** | A raw table dbt reads from but doesn't create (our `raw_apple_health.records`). | The delivery dbt starts from |
+| **Adapter** | The plug that lets dbt talk to a specific database (Postgres now, Snowflake in 2b). | The adapter that lets one appliance work in any kitchen |
+| **Profile** | dbt's connection settings (`profiles.yml`), secrets read from `.env`. | The kitchen's address and door code |
+| **Staging layer** | First clean-up: real types, clear names, 1 model per source. No business logic. | Wash and cut |
+| **Intermediate layer** | Business logic: de-duplication, combining sources. | Combining prepared ingredients |
+| **Mart** | Final, ready-to-use tables for people and dashboards (e.g. one row per day). | The plated dish |
+| **Schema (database)** | A folder inside a database grouping tables (`raw_apple_health`, `staging`, `marts`). | Separate cold rooms per station |
+| **View vs table** | A *view* is a saved query that runs when read; a *table* stores the results. | A recipe vs. a dish already cooked and waiting |
+| **Materialization** | How dbt builds a model: as a view, a table, or incrementally. | Cook to order vs. batch-cook in advance |
+| **Data test** | An automatic check on the data itself (not null, unique, accepted values, custom rules). | The taster checking every dish |
+| **Surrogate key** | An ID we compute (e.g. `md5` of the record's fields) when the data has no reliable ID. | A barcode we print on unlabelled jars |
+| **md5 / hash** | A function that turns any text into a fixed-length fingerprint; same input → same fingerprint. | A fingerprint for each jar |
+| **Time zone (UTC vs local)** | UTC is one global clock; *local* is the wall-clock where you were. Daily tables use local days. | Head office clock vs. the kitchen clock |
+| **Data profiling** | Looking at what's actually in the data (kinds, units, nulls) before modelling it. | Checking the delivery before writing the menu |
+| **Duplicate (exact vs overlapping)** | Exact = the same record twice; overlapping = different devices recording the same event. | The same jar delivered twice vs. two suppliers sending the same item |

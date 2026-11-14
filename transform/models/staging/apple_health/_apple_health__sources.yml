@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: apple_health
+    description: Raw Apple Health export, loaded as-is by the Phase 1 pipeline (dlt). All values are text.
+    schema: raw_apple_health
+    tables:
+      - name: records
+        description: One row per <Record> in export.xml. Full snapshot, replaced on every load.
