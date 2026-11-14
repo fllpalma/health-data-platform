@@ -16,6 +16,7 @@ dependencies = [
 dev = [
     "pytest>=8",
     "ruff>=0.17.5",
+    "sqlfluff>=4.5.0",
 ]
 
 [build-system]

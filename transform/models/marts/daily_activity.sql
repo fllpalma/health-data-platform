@@ -2,7 +2,10 @@
 
 with hourly as (
 
-    select local_date, record_type, value
+    select
+        local_date,
+        record_type,
+        value
     from {{ ref('int_apple_health__activity_hourly') }}
 
 ),
@@ -11,7 +14,9 @@ stand as (
 
     -- Stand hours: count of hours marked "Stood" (category record, not cumulative)
     -- distinct clock hours: 2 sources (e.g. old + new Watch) report the same hour (1,395 duplicates found)
-    select local_date, count(distinct date_trunc('hour', start_at_local)) as stand_hours
+    select
+        local_date,
+        count(distinct date_trunc('hour', start_at_local)) as stand_hours
     from {{ ref('int_apple_health__records_deduplicated') }}
     where record_type = 'AppleStandHour' and value_category = 'Stood'
     group by 1
@@ -41,4 +46,4 @@ select
     round(daily.flights_climbed)::integer as flights_climbed,
     stand.stand_hours
 from daily
-left join stand using (local_date)
+left join stand on daily.local_date = stand.local_date

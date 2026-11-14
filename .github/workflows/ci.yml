@@ -36,3 +36,57 @@ jobs:
 
       - name: Tests
         run: uv run pytest -v
+
+  # Dress rehearsal: the WHOLE platform on SYNTHETIC data (real data never leaves the Mac).
+  # synthetic export -> pipeline -> lake + Postgres -> dbt build (models + 35 data tests)
+  dbt-build:
+    name: dbt-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.7
+        env:
+          POSTGRES_USER: health
+          POSTGRES_PASSWORD: ci-only-password  # throwaway CI database, not a real secret
+          POSTGRES_DB: health
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U health"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      POSTGRES_USER: health
+      POSTGRES_PASSWORD: ci-only-password
+      POSTGRES_DB: health
+      LAKE_ACCESS_KEY: ci-key
+      LAKE_SECRET_KEY: ci-secret-only-for-tests
+      DBT_PROJECT_DIR: transform
+      DBT_PROFILES_DIR: transform
+    steps:
+      - name: Get the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install exact dependencies from uv.lock
+        run: uv sync --locked
+
+      - name: Start the lake (SeaweedFS, same pinned version as docker-compose.yml)
+        run: |
+          docker run -d --name lake -p 8333:8333 \
+            -e AWS_ACCESS_KEY_ID="$LAKE_ACCESS_KEY" -e AWS_SECRET_ACCESS_KEY="$LAKE_SECRET_KEY" \
+            --entrypoint weed chrislusf/seaweedfs:4.53 mini -dir=/data -bucket=raw
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:8333/healthz && exit 0; sleep 1; done
+          docker logs lake; exit 1
+
+      - name: Generate a synthetic Apple Health export
+        run: uv run python -m health_platform.synthetic data/inbox/synthetic_export.zip
+
+      - name: Run the ingestion pipeline (zip -> lake -> Postgres)
+        run: uv run python -m health_platform.pipeline data/inbox/synthetic_export.zip
+
+      - name: dbt build (all models + data tests)
+        run: uv run dbt build

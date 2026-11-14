@@ -64,3 +64,11 @@ def test_reads_export_date(sample_zip):
 
 def test_batched_splits_without_losing_items():
     assert list(batched(range(5), 2)) == [[0, 1], [2, 3], [4]]
+
+
+def test_raw_table_contract_covers_every_parsed_field():
+    # Bug found in the CI rehearsal: dlt skipped the all-empty "device" column on synthetic data.
+    from health_platform.apple_health import FIELDS
+    from health_platform.pipeline import RAW_COLUMNS
+
+    assert set(FIELDS.values()) | {"metadata", "export_date"} == set(RAW_COLUMNS)

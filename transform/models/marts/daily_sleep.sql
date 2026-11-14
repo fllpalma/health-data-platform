@@ -7,8 +7,11 @@
 with covered as (
 
     -- Merge overlapping segments into one continuous coverage per night, source and stage group
-    select sleep_date, source_name, stage_group,
-           range_agg(tsrange(start_at_local, end_at_local)) as coverage
+    select
+        sleep_date,
+        source_name,
+        stage_group,
+        range_agg(tsrange(start_at_local, end_at_local)) as coverage
     from {{ ref('int_apple_health__sleep_segments') }}
     where stage_group in ('asleep', 'awake', 'in_bed')
     group by 1, 2, 3
@@ -17,10 +20,13 @@ with covered as (
 
 covered_minutes as (
 
-    select sleep_date, source_name, stage_group,
-           sum(extract(epoch from (upper(piece) - lower(piece))) / 60.0) as minutes,
-           min(lower(piece)) as first_start,
-           max(upper(piece)) as last_end
+    select
+        sleep_date,
+        source_name,
+        stage_group,
+        sum(extract(epoch from (upper(piece) - lower(piece))) / 60.0) as minutes,
+        min(lower(piece)) as first_start,
+        max(upper(piece)) as last_end
     from covered, unnest(coverage) as piece
     group by 1, 2, 3
 
@@ -29,10 +35,12 @@ covered_minutes as (
 stages as (
 
     -- Stage detail (Core/Deep/REM): a breakdown only, summed per stage
-    select sleep_date, source_name,
-           sum(minutes) filter (where stage = 'AsleepCore') as core_minutes,
-           sum(minutes) filter (where stage = 'AsleepDeep') as deep_minutes,
-           sum(minutes) filter (where stage = 'AsleepREM') as rem_minutes
+    select
+        sleep_date,
+        source_name,
+        sum(minutes) filter (where stage = 'AsleepCore') as core_minutes,
+        sum(minutes) filter (where stage = 'AsleepDeep') as deep_minutes,
+        sum(minutes) filter (where stage = 'AsleepREM') as rem_minutes
     from {{ ref('int_apple_health__sleep_segments') }}
     group by 1, 2
 
@@ -48,7 +56,7 @@ per_source as (
         max(c.minutes) filter (where c.stage_group = 'in_bed') as in_bed_minutes,
         max(c.first_start) filter (where c.stage_group = 'asleep') as fell_asleep_at,
         max(c.last_end) filter (where c.stage_group = 'asleep') as woke_up_at
-    from covered_minutes c
+    from covered_minutes as c
     group by 1, 2
 
 ),
@@ -57,14 +65,16 @@ ranked as (
 
     select
         p.*,
-        s.core_minutes, s.deep_minutes, s.rem_minutes,
+        s.core_minutes,
+        s.deep_minutes,
+        s.rem_minutes,
         row_number() over (
             partition by p.sleep_date
             order by coalesce(p.asleep_minutes, 0) desc, coalesce(p.in_bed_minutes, 0) desc
         ) as source_rank,
         max(p.in_bed_minutes) over (partition by p.sleep_date) as best_in_bed_minutes
-    from per_source p
-    left join stages s using (sleep_date, source_name)
+    from per_source as p
+    left join stages as s on p.sleep_date = s.sleep_date and p.source_name = s.source_name
 
 )
 
@@ -76,7 +86,8 @@ select
     round(deep_minutes) as deep_minutes,
     round(rem_minutes) as rem_minutes,
     round(awake_minutes) as awake_minutes,
-    round(best_in_bed_minutes) as in_bed_minutes,   -- in-bed time may come from another source (e.g. iPhone)
+    -- in-bed time may come from another source (e.g. iPhone)
+    round(best_in_bed_minutes) as in_bed_minutes,
     fell_asleep_at,
     woke_up_at,
     (core_minutes is not null or deep_minutes is not null or rem_minutes is not null) as has_stages

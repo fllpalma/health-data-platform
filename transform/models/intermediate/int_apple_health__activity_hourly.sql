@@ -12,7 +12,12 @@
 
 with records as (
 
-    select record_type, source_name, start_at_local, value_numeric, unit
+    select
+        record_type,
+        source_name,
+        start_at_local,
+        value_numeric,
+        unit
     from {{ ref('int_apple_health__records_deduplicated') }}
     where record_type in ({{ "'" ~ cumulative_types | join("', '") ~ "'" }})
 
