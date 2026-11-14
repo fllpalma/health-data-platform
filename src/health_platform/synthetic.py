@@ -8,7 +8,9 @@ It deliberately reproduces the traps found in real exports, so tests prove the f
 - two Watches reporting the same stand hours                 -> ADR 0005
 
 Run it:
-    uv run python -m health_platform.synthetic data/inbox/synthetic_export.zip
+    uv run python -m health_platform.synthetic data/synthetic/synthetic_export.zip
+
+(Never put it in data/inbox/: the Airflow DAG watches that folder for REAL exports.)
 """
 
 import argparse

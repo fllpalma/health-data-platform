@@ -42,6 +42,8 @@ x-airflow-common: &airflow-common
     LAKE_SECRET_KEY: ${LAKE_SECRET_KEY}
     DBT_PROJECT_DIR: /opt/project/transform
     DBT_PROFILES_DIR: /opt/project/transform
+    # Airflow "connection" to the warehouse, referenced in DAGs by its id: health_warehouse
+    AIRFLOW_CONN_HEALTH_WAREHOUSE: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@warehouse:5432/${POSTGRES_DB:-health}
   volumes:
     - ./dags:/opt/airflow/dags:ro          # the schedules (DAGs), read-only
     - ./src:/opt/project/src:ro            # our pipeline code (live, no rebuild needed)
