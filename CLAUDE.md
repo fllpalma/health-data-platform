@@ -18,7 +18,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
    - Raw data NEVER goes into Git (`data/` and export files are gitignored; check before every commit).
    - Raw data stays on my Mac. Anything deployed to AWS uses synthetic sample data only.
    - LLMs run locally via Ollama only.
-5. **Teach before you build.** For each step: what we'll do → why real teams do it → analogy → then do it → one-line recap. At key moments, ask me to write or change a small piece myself.
+5. **Teach before you build.** For each step: what we'll do → why real teams do it → analogy → then do it → one-line recap. **Claude does all the typing** (code, commands, git, GitHub); I don't write code. Instead, pause after each meaningful step, show the key line and what it means, and check my understanding with a quick question.
 6. **Ask before big moves.** Before installing tools, creating many files, or changing architecture, show a short plan and wait for my OK.
 7. **Be credit-aware.** Keep explanations short by default; I'll say "go deeper" when I want more. Don't re-read or regenerate files unnecessarily.
 
@@ -31,6 +31,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
 0. Setup — tools, GitHub repo, Docker, project skeleton
 1. Foundations — ingest Apple Health export into a data lake (MinIO) + warehouse (Postgres)
 2. Transformations — dbt models + tests
+   - 2b. Snowflake sprint (optional, 30-day trial) — same dbt project on Snowflake
 3. Orchestration — Airflow + CI on GitHub Actions and Jenkins (comparison)
 4. Streaming — Kafka
 5. Observability & lineage — Prometheus, Grafana, OpenLineage/Marquez
@@ -39,7 +40,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
 8. LLMs — Ollama, LangChain/LangGraph, pgvector, Langfuse
 9. Kubernetes & GitOps (required) — kind + Helm, Argo CD
 
-## CURRENT PHASE: 0 — Setup
+## CURRENT PHASE: 1 — Foundations
 (Update this line when a phase gate is passed.)
 
 ## Phase gate (must pass before moving on)
