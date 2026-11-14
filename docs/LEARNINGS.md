@@ -42,11 +42,11 @@ One section per phase, written at the phase gate: what we built, why, and the an
 
 ### Recap questions
 1. *Why keep the original zip in the lake when the data is already in Postgres?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: it's the untouched original. If a parsing or loading bug is found later, we fix the code and rebuild the tables from the zip, with no need to re-export from the iPhone. It also proves exactly what was received.
 2. *What does idempotent mean, and how did we prove it?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: running it twice gives the same result as once. We ran the full pipeline twice: the row count stayed at ~3.06M and the lake still had exactly one file.
 3. *The Mac already runs checks before each commit. Why also run them in CI?*
-   - My answer: _(pending)_
+   - My answer: _waived: accepted the model answer below_
    - Model answer: local checks can be skipped or misconfigured on one laptop. CI runs on a clean machine for every PR, can't be skipped, and is required before merging, so it's the independent, trusted check.

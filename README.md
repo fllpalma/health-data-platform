@@ -7,7 +7,7 @@ from raw data → pipelines → ML → automations → LLM agents, built the way
 > See `.gitignore`. Anything deployed to the cloud uses synthetic data only.
 
 ## Status
-Current phase: **1 — Foundations**. Full roadmap: [docs/PLAN.md](docs/PLAN.md)
+Current phase: **2 — Transformations**. Full roadmap: [docs/PLAN.md](docs/PLAN.md)
 
 ## Prerequisites (macOS, Apple Silicon)
 | Tool | Purpose |
