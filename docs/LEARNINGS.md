@@ -79,3 +79,24 @@ One section per phase, written at the phase gate: what we built, why, and the an
   1. Bronze = exactly as delivered (never changed); silver = cleaned and de-duplicated; gold = final daily tables for people.
   2. Python tests check the code with tiny invented inputs; data tests check the real data's content (duplicates, impossible values), which code can't predict.
   3. Synthetic data has the same shape and traps but is invented, so it can run on GitHub's machines with zero privacy risk.
+
+## Phase 2b — Snowflake sprint (2026-11-14)
+
+- **What we built:** Snowflake set up as code (`snowflake/setup.sql`: X-Small warehouse with 60 s auto-suspend,
+  a 20-credit resource monitor, least-privilege role, key-pair service user); a second dbt target and a pipeline
+  destination for Snowflake; a privacy guardrail in code; portable SQL so **one dbt project runs on both warehouses**
+  (ADR 0006). PR #13.
+- **Why real teams do it:** warehouse migrations are common. Most of the work is dialect differences, cost control,
+  and proving results are the same before switching.
+- **🍽️ Analogy:** the same recipes cooked for a month in a rented professional kitchen. Bigger and faster, but the
+  meter runs while the stove is on, so it switches itself off after 60 seconds and has a prepaid cap.
+- **What surprised me / what broke:**
+  - Loud failures (easy): `filter (where …)`, `extract(epoch …)`, `range_agg` don't exist in Snowflake.
+  - **Silent failure (dangerous):** a bare `numeric` is `NUMBER(38,0)` in Snowflake, so decimals were dropped
+    (distance 4.7 km → 4) **with every test passing**. Only the **parity test** (same input, both warehouses) caught it.
+  - Migrations need an agreed **tolerance**: rewriting the SQL changed 5 of 1,529 nights by ≤ 1 minute (rounding order).
+  - The guardrail refused to send my real export to Snowflake. Policies in code beat policies in memory.
+- **Cost:** credits used: _to check in Snowsight → Admin → Cost Management_. Postgres locally: $0, but I run it myself.
+- **Real data in Snowflake:** none. Synthetic only; optional daily summaries skipped by choice.
+- **⚠️ Teardown:** account kept for exploration. **Run `snowflake/teardown.sql` before ~2026-12-13** (trial end).
+- **Gate:** dbt build passes on both warehouses ✅; differences explained here and in ADR 0006 ✅.
