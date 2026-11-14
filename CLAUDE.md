@@ -31,6 +31,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
 0. Setup — tools, GitHub repo, Docker, project skeleton
 1. Foundations — ingest Apple Health export into a data lake (MinIO) + warehouse (Postgres)
 2. Transformations — dbt models + tests
+   - 2b. Snowflake sprint (optional, 30-day trial) — same dbt project on Snowflake
 3. Orchestration — Airflow + CI on GitHub Actions and Jenkins (comparison)
 4. Streaming — Kafka
 5. Observability & lineage — Prometheus, Grafana, OpenLineage/Marquez

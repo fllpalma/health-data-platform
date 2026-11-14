@@ -31,6 +31,15 @@ Each phase builds on the one before. Don't start a phase until the previous gate
 - 🍽️ Prep chefs follow written recipes; raw ingredients become ready dishes, quality-checked.
 - **Gate check:** `dbt build` passes; dbt docs show the lineage graph.
 
+## Phase 2b — Snowflake sprint (optional, 30-day trial)
+**Goal:** run the same dbt project on Snowflake to learn how teams migrate between warehouses (Postgres → Snowflake) and to get hands-on with the warehouse my team uses at work.
+- Timing: start the Snowflake free trial only when Phase 2's gate is passed (the trial gives $400 of usage over 30 days and ends when either runs out).
+- Cost rules: never add a credit card, so the trial just stops when it ends. Use an X-Small warehouse with auto-suspend at 60 seconds. Tear everything down before the trial ends.
+- Privacy: no raw health data in Snowflake. Load only daily summary tables or synthetic data.
+- What we'll do: create a dbt profile/target for Snowflake, load the summary data, run dbt build on Snowflake, and compare it with Postgres (SQL differences, cost model, performance).
+- 🍽️ The same recipes cooked in a rented professional kitchen for a month.
+- **Gate check:** dbt build passes on both Postgres and Snowflake, and `docs/LEARNINGS.md` explains the differences in plain words.
+
 ## Phase 3 — Orchestration (Airflow)
 **Goal:** everything runs on its own, in the right order, with retries.
 - Airflow 3 (Astro CLI) running ingestion → dbt as a DAG; triggered when a new export lands.
