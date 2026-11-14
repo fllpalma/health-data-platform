@@ -1,0 +1,10 @@
+# Never send data, secrets or local clutter into a Docker image build
+data/
+.env
+.env.*
+!.env.example
+.venv/
+.git/
+transform/target/
+transform/logs/
+**/__pycache__/
