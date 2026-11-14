@@ -25,6 +25,7 @@ It is a **learning project**: the goal is that I understand every piece, not jus
 ## My machine
 - MacBook M4 (Apple Silicon, arm64), 24 GB RAM.
 - Docker (Docker Desktop or OrbStack) limited to ~12 GB. Use Docker Compose **profiles** so only the current phase's services run.
+- **On demand only.** Nothing may run permanently on my Mac: every service uses `restart: "no"`; start with `make up` / `make up-airflow`, and always `make down` at the end of a session.
 - Ollama runs natively on macOS (not in Docker) to use the GPU.
 
 ## Phases (full detail in `docs/PLAN.md`)

@@ -27,6 +27,15 @@ cp .env.example .env        # then fill in real values (never commit .env)
 docker compose --profile foundations up -d --wait   # Phase 1: start the lake + warehouse
 ```
 
+## Running it (on demand only)
+Nothing runs in the background: every service has `restart: "no"`, so it starts only when asked.
+```bash
+make up          # lake + warehouse (most sessions)
+make up-airflow  # + Airflow, UI at http://localhost:8080
+make status      # what's running
+make down        # stop everything at the end of a session (data is kept)
+```
+
 ## How we work
 - Branches: `phase-N/short-description`. `main` is protected: changes only via pull request.
 - Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
